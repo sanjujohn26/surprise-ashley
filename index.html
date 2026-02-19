@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Ashley</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://w.soundcloud.com/player/api.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fff5f7;
+            color: #d63384;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        #container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .footnote {
+            font-size: 0.9rem;
+            font-style: italic;
+            color: #ff8fa3;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            min-height: 200px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+
+        #primaryBtn { background-color: #ff4d6d; color: white; }
+        #secondaryBtn { background-color: #adb5bd; color: white; }
+        .hidden { display: none !important; }
+
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            width: 50px;
+            height: 70px;
+            background: #ff4d6d;
+            border-radius: 50%;
+            opacity: 0.8;
+            z-index: 5;
+            animation: float 6s ease-in forwards;
+        }
+
+        @keyframes float {
+            to { transform: translateY(-120vh) translateX(50px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <iframe id="sc-player" 
+            style="display:none" 
+            src="https://w.soundcloud.com/player/?url=https://soundcloud.com/palden-choden/desi-girl-dostana-720p-hd-song&auto_play=false" 
+            allow="autoplay">
+    </iframe>
+
+    <div id="container">
+        <h1 id="questionText">Please confirm if this is Ashley</h1>
+        <span id="footnote" class="footnote hidden"></span>
+        <div class="buttons" id="btnWrapper">
+            <button id="primaryBtn" onclick="handlePositive()">Yes</button>
+            <button id="secondaryBtn" onclick="handleNegative()">No</button>
+        </div>
+    </div>
+
+    <script>
+        const flow = [
+            { q: "Please confirm if this is Ashley", pos: "Yes", neg: "No" },
+            { q: "Please confirm this is Ashley Thomas", pos: "Yes", neg: "No" },
+            { q: "Please confirm this is Ashley Josephine Thomas", pos: "Yes", neg: "No" },
+            { q: "Yay, Welcome Ashley! ❤️", pos: "Continue", neg: "", celebrate: true },
+            { q: "Are you ready to play <br>'Reasons Why I Love Ashley: Fact or Fiction'?", pos: "Yes", neg: "No" },
+            { q: "Reason 1: <br>Ashley is Beautiful", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 2: <br>Ashley is Smart", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 3: <br>Ashley is Family Oriented", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 4: <br>Ashley is Funny", pos: "Fact", neg: "Fiction", note: "Disclaimer: not as funny as Sanju" },
+            { q: "Reason 5: <br>Ashley is Caring", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 6: <br>Ashley is Patient", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 7: <br>Ashley is Loving", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 8: <br>Ashley is Hot 🔥🔥🔥", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 9: <br>Ashley is Thoughtful", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 10: <br>Ashley is Genuine", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 11: <br>Ashley is Ambitious", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 12: <br>Ashley is Career Driven", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 13: <br>Ashley is Flexible", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 14: <br>Ashley is Stylish", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 15: <br>Ashley's Playfulness", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 16: <br>Ashley's Hugs", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 17: <br>Ashley's Breakfast Burritos", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 18: <br>Ashley's unmatched multiplication table skills", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 19: <br>Ashley's Silliness", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 20: <br>Ashley's Goofiness", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 21: <br>Ashley's Smile", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 22: <br>Ashley's hair, especially when she wears those claw clips", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 23: <br>Ashley's Passion", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 24: <br>Ashley's Warmth", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 25: <br>Ashley's Kisses", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 26: <br>Ashley's Perseverance", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 27: <br>Ashley's Creativity", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 28: <br>Ashley's Energy", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 29: <br>Ashley's Eyebrows", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 30: <br>Ashley's Appreciation", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 31: <br>Ashley's Effort", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 32: <br>How pavum Ashley is", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 33: <br>Ashley's Pure Soul", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 34: <br>Our inside jokes", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 35: <br>Ashley always makes time for me", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 36: <br>Ashley always prioritizes me", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 37: <br>Ashley is non-judgmental", pos: "Fact", neg: "Fiction" },
+            { q: "Reason 38: <br>Ashley always makes me smile", pos: "Fact", neg: "Fiction" },
+            { q: "You passed! Every single one is a Fact. I love you! ❤️", pos: "The End", neg: "", celebrate: true }
+        ];
+
+        let currentStep = 0;
+        let failCount = 0;
+        let scalePos = 1;
+        let scaleNeg = 1;
+        let musicStarted = false;
+
+        const questionText = document.getElementById('questionText');
+        const footnote = document.getElementById('footnote');
+        const primaryBtn = document.getElementById('primaryBtn');
+        const secondaryBtn = document.getElementById('secondaryBtn');
+        const widget = SC.Widget(document.getElementById('sc-player'));
+
+        function updateScreen() {
+            const data = flow[currentStep];
+            questionText.innerHTML = data.q;
+            primaryBtn.innerText = data.pos;
+            secondaryBtn.innerText = data.neg;
+            
+            if (data.note) {
+                footnote.innerText = data.note;
+                footnote.classList.remove('hidden');
+            } else {
+                footnote.classList.add('hidden');
+            }
+
+            scalePos = 1; scaleNeg = 1; failCount = 0;
+            primaryBtn.style.transform = `scale(1)`;
+            secondaryBtn.style.transform = `scale(1)`;
+            secondaryBtn.classList.toggle('hidden', data.neg === "");
+
+            if (data.celebrate) {
+                launchCelebration();
+            }
+        }
+
+        function launchCelebration() {
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const b = document.createElement('div');
+                    b.className = 'balloon';
+                    b.style.left = Math.random() * 100 + "vw";
+                    b.style.backgroundColor = ['#ff4d6d', '#ff8fa3', '#c9184a'][Math.floor(Math.random() * 3)];
+                    document.body.appendChild(b);
+                    setTimeout(() => b.remove(), 6000);
+                }, i * 300);
+            }
+        }
+
+        function handleNegative() {
+            failCount++;
+            scalePos += 0.7;
+            scaleNeg -= 0.2;
+            primaryBtn.style.transform = `scale(${scalePos})`;
+            secondaryBtn.style.transform = `scale(${scaleNeg})`;
+            if (failCount >= 3) secondaryBtn.classList.add('hidden');
+        }
+
+        function handlePositive() {
+            // Start the music on the first click!
+            if (!musicStarted) {
+                widget.play();
+                musicStarted = true;
+            }
+
+            if (currentStep < flow.length - 1) {
+                currentStep++;
+                updateScreen();
+            } else {
+                questionText.innerHTML = "Forever & Always ❤️";
+                document.getElementById('btnWrapper').classList.add('hidden');
+                footnote.classList.add('hidden');
+                launchCelebration();
+            }
+        }
+    </script>
+</body>
+</html>
